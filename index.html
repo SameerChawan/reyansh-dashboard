@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reyansh G8 Dashboard — UWCSEA Dover</title>
+<style>
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+    --text: #f1f5f9; --text2: #94a3b8; --accent: #3b82f6;
+    --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+    --purple: #8b5cf6; --pink: #ec4899; --teal: #14b8a6;
+    --radius: 12px; --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --google-blue: #4285f4; --google-green: #34a853; --google-yellow: #fbbc05; --google-red: #ea4335;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  .container { max-width:1400px; margin:0 auto; padding:20px; }
+
+  /* Header */
+  .header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:28px; padding:24px; background:var(--surface); border-radius:var(--radius); border-left:4px solid var(--accent); }
+  .header h1 { font-size:1.6rem; font-weight:700; }
+  .header h1 span { color:var(--accent); }
+  .header-meta { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+  .header-meta .badge { padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+  .badge-green { background:rgba(34,197,94,0.15); color:var(--green); }
+  .badge-amber { background:rgba(245,158,11,0.15); color:var(--amber); }
+  .badge-red { background:rgba(239,68,68,0.15); color:var(--red); }
+  .badge-blue { background:rgba(59,130,246,0.15); color:var(--accent); }
+  .week-nav { display:flex; align-items:center; gap:8px; }
+  .week-nav button { background:var(--surface2); border:none; color:var(--text); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:0.9rem; }
+  .week-nav button:hover { background:var(--accent); }
+  .week-nav span { font-weight:600; min-width:100px; text-align:center; }
+
+  /* Tabs */
+  .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--surface); padding:6px; border-radius:var(--radius); overflow-x:auto; }
+  .tab { padding:10px 20px; border-radius:8px; border:none; background:transparent; color:var(--text2); cursor:pointer; font-size:0.9rem; font-weight:500; white-space:nowrap; transition:all 0.2s; }
+  .tab.active { background:var(--accent); color:#fff; }
+  .tab:hover:not(.active) { background:var(--surface2); color:var(--text); }
+  .tab .tab-icon { margin-right:6px; }
+
+  /* Panels */
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* Subject Cards Grid */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:20px; }
+  .card { background:var(--surface); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); transition:transform 0.2s,box-shadow 0.2s; cursor:pointer; border-top:3px solid transparent; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+  .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .card-title { font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:10px; }
+  .card-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+  .status-dot { width:12px; height:12px; border-radius:50%; }
+  .status-dot.green { background:var(--green); box-shadow:0 0 8px rgba(34,197,94,0.5); }
+  .status-dot.amber { background:var(--amber); box-shadow:0 0 8px rgba(245,158,11,0.5); }
+  .status-dot.red { background:var(--red); box-shadow:0 0 8px rgba(239,68,68,0.5); }
+
+  .card-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .stat { text-align:center; padding:10px; background:var(--surface2); border-radius:8px; }
+  .stat-val { font-size:1.4rem; font-weight:700; }
+  .stat-label { font-size:0.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+
+  .card-actions { display:flex; gap:8px; margin-top:14px; }
+  .btn-sm { padding:6px 12px; border-radius:6px; border:none; font-size:0.78rem; cursor:pointer; font-weight:500; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:#2563eb; }
+  .btn-ghost { background:var(--surface2); color:var(--text); }
+  .btn-ghost:hover { background:#475569; }
+
+  /* Alerts Panel */
+  .alerts-list { display:flex; flex-direction:column; gap:10px; }
+  .alert-item { display:flex; align-items:flex-start; gap:14px; padding:16px; background:var(--surface); border-radius:var(--radius); border-left:4px solid; }
+  .alert-item.amber { border-color:var(--amber); }
+  .alert-item.red { border-color:var(--red); }
+  .alert-item.green { border-color:var(--green); }
+  .alert-icon { font-size:1.3rem; margin-top:2px; }
+  .alert-body { flex:1; }
+  .alert-title { font-weight:600; margin-bottom:4px; }
+  .alert-desc { font-size:0.85rem; color:var(--text2); }
+  .alert-action { font-size:0.8rem; color:var(--accent); margin-top:6px; cursor:pointer; }
+
+  /* Assignments Table */
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; padding:12px 16px; background:var(--surface2); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text2); }
+  td { padding:12px 16px; border-bottom:1px solid var(--surface2); font-size:0.9rem; }
+  tr:hover td { background:rgba(59,130,246,0.05); }
+  .status-badge { padding:4px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; }
+  .status-submitted { background:rgba(34,197,94,0.15); color:var(--green); }
+  .status-late { background:rgba(245,158,11,0.15); color:var(--amber); }
+  .status-missing { background:rgba(239,68,68,0.15); color:var(--red); }
+  .status-pending { background:rgba(148,163,184,0.15); color:var(--text2); }
+  .status-graded { background:rgba(139,92,246,0.15); color:var(--purple); }
+
+  /* Check-in Panel */
+  .checkin-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(400px,1fr)); gap:16px; }
+  .checkin-card { background:var(--surface); border-radius:var(--radius); padding:20px; }
+  .checkin-card h3 { font-size:1rem; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .checkin-card textarea { width:100%; background:var(--surface2); border:1px solid #475569; border-radius:8px; padding:12px; color:var(--text); font-size:0.9rem; resize:vertical; min-height:80px; font-family:inherit; }
+  .checkin-card textarea:focus { outline:none; border-color:var(--accent); }
+  .checkin-question { font-size:0.85rem; color:var(--teal); font-style:italic; margin-bottom:10px; padding:10px; background:rgba(20,184,166,0.08); border-radius:8px; }
+  .tag-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+  .tag { padding:4px 10px; border-radius:12px; font-size:0.72rem; cursor:pointer; border:1px solid var(--surface2); background:transparent; color:var(--text2); transition:all 0.2s; }
+  .tag.selected { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  /* G9 Readiness */
+  .readiness-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .readiness-card { background:var(--surface); border-radius:var(--radius); padding:20px; }
+  .readiness-card h3 { margin-bottom:14px; }
+  .skill-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface2); }
+  .skill-name { font-size:0.9rem; }
+  .skill-dots { display:flex; gap:6px; }
+  .skill-dot { width:28px; height:28px; border-radius:50%; border:2px solid var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; transition:all 0.2s; }
+  .skill-dot.filled { border-color:var(--accent); background:var(--accent); color:#fff; }
+  .skill-dot:hover { border-color:var(--accent); }
+
+  /* Google Classroom Panel */
+  .gc-header { display:flex; align-items:center; gap:16px; margin-bottom:24px; padding:20px; background:var(--surface); border-radius:var(--radius); }
+  .gc-logo { display:flex; gap:4px; }
+  .gc-logo span { width:20px; height:20px; border-radius:4px; }
+  .gc-links { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-bottom:24px; }
+  .gc-link-card { background:var(--surface); border-radius:var(--radius); padding:20px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all 0.2s; text-decoration:none; color:var(--text); border:1px solid var(--surface2); }
+  .gc-link-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .gc-link-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+  .gc-link-title { font-weight:600; margin-bottom:2px; }
+  .gc-link-desc { font-size:0.8rem; color:var(--text2); }
+
+  .import-zone { background:var(--surface); border-radius:var(--radius); padding:24px; margin-bottom:20px; }
+  .import-zone h3 { margin-bottom:14px; }
+  .import-zone textarea { width:100%; min-height:200px; background:var(--surface2); border:1px solid #475569; border-radius:8px; padding:14px; color:var(--text); font-size:0.85rem; font-family:'Courier New',monospace; resize:vertical; }
+  .import-zone textarea:focus { outline:none; border-color:var(--accent); }
+  .import-zone .hint { font-size:0.8rem; color:var(--text2); margin-top:8px; }
+
+  .sync-status { display:flex; align-items:center; gap:10px; padding:14px; background:var(--surface); border-radius:var(--radius); margin-bottom:16px; }
+  .sync-dot { width:10px; height:10px; border-radius:50%; }
+  .sync-dot.connected { background:var(--green); box-shadow:0 0 6px rgba(34,197,94,0.5); }
+  .sync-dot.manual { background:var(--amber); }
+
+  /* Guardian Email Parser */
+  .parser-result { background:var(--surface2); border-radius:8px; padding:16px; margin-top:16px; max-height:400px; overflow-y:auto; }
+  .parser-item { display:flex; align-items:center; gap:12px; padding:10px; border-bottom:1px solid #475569; }
+  .parser-item:last-child { border-bottom:none; }
+  .parser-check { width:18px; height:18px; border-radius:4px; border:2px solid var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .parser-check.selected { background:var(--accent); border-color:var(--accent); }
+  .parser-check.selected::after { content:'✓'; color:#fff; font-size:0.7rem; }
+
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:var(--surface); border-radius:var(--radius); padding:28px; width:90%; max-width:520px; max-height:90vh; overflow-y:auto; }
+  .modal h2 { margin-bottom:20px; font-size:1.2rem; }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:0.85rem; color:var(--text2); margin-bottom:6px; font-weight:500; }
+  .form-group input, .form-group select, .form-group textarea { width:100%; padding:10px 14px; background:var(--surface2); border:1px solid #475569; border-radius:8px; color:var(--text); font-size:0.9rem; font-family:inherit; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--accent); }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .btn { padding:10px 20px; border-radius:8px; border:none; font-size:0.9rem; cursor:pointer; font-weight:500; }
+  .btn-cancel { background:var(--surface2); color:var(--text); }
+  .btn-save { background:var(--accent); color:#fff; }
+  .btn-save:hover { background:#2563eb; }
+  .btn-danger { background:var(--red); color:#fff; }
+  .btn-google { background:var(--google-blue); color:#fff; }
+  .btn-google:hover { background:#3367d6; }
+
+  /* Export/Import */
+  .toolbar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .btn-export { background:var(--teal); color:#fff; }
+
+  /* Sparkline */
+  .sparkline { display:flex; align-items:flex-end; gap:2px; height:24px; margin-top:8px; }
+  .spark-bar { width:8px; border-radius:2px; transition:height 0.3s; }
+  .spark-bar.good { background:var(--green); }
+  .spark-bar.warn { background:var(--amber); }
+  .spark-bar.bad { background:var(--red); }
+
+  /* Toast */
+  .toast { position:fixed; bottom:20px; right:20px; background:var(--green); color:#fff; padding:12px 20px; border-radius:8px; font-size:0.9rem; z-index:200; display:none; animation:slideIn 0.3s; }
+  @keyframes slideIn { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+  /* Responsive */
+  @media (max-width:768px) {
+    .grid { grid-template-columns:1fr; }
+    .checkin-grid { grid-template-columns:1fr; }
+    .gc-links { grid-template-columns:1fr; }
+    .header { flex-direction:column; align-items:flex-start; }
+  }
+
+  /* Handbook Panel */
+  .handbook-hero { background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%); border-radius:var(--radius); padding:32px; margin-bottom:24px; border:1px solid #2d4a6f; }
+  .handbook-hero h2 { font-size:1.5rem; margin-bottom:8px; }
+  .handbook-hero p { color:var(--text2); font-size:0.95rem; }
+  .handbook-hero .path-line { display:flex; align-items:center; gap:8px; margin-top:16px; flex-wrap:wrap; }
+  .path-step { padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+  .path-step.current { background:var(--accent); color:#fff; }
+  .path-step.future { background:var(--surface2); color:var(--text2); }
+  .path-arrow { color:var(--text2); font-size:0.8rem; }
+
+  .grade-timeline { position:relative; padding-left:40px; }
+  .grade-timeline::before { content:''; position:absolute; left:16px; top:0; bottom:0; width:2px; background:var(--surface2); }
+  .grade-block { position:relative; margin-bottom:28px; }
+  .grade-block::before { content:''; position:absolute; left:-32px; top:8px; width:14px; height:14px; border-radius:50%; border:3px solid var(--accent); background:var(--bg); z-index:1; }
+  .grade-block.active::before { background:var(--accent); box-shadow:0 0 10px rgba(59,130,246,0.5); }
+  .grade-block.completed::before { background:var(--green); border-color:var(--green); }
+  .grade-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; cursor:pointer; }
+  .grade-header h3 { font-size:1.1rem; }
+  .grade-badge { padding:3px 10px; border-radius:12px; font-size:0.7rem; font-weight:600; }
+  .grade-badge.active { background:rgba(59,130,246,0.2); color:var(--accent); }
+  .grade-badge.completed { background:rgba(34,197,94,0.2); color:var(--green); }
+  .grade-badge.upcoming { background:rgba(148,163,184,0.15); color:var(--text2); }
+  .grade-content { background:var(--surface); border-radius:var(--radius); padding:20px; }
+  .grade-content.collapsed { display:none; }
+
+  .req-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin-bottom:16px; }
+  .req-card { background:var(--surface2); border-radius:8px; padding:14px; }
+  .req-card h4 { font-size:0.9rem; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .req-card ul { list-style:none; padding:0; }
+  .req-card li { font-size:0.82rem; color:var(--text2); padding:3px 0; display:flex; align-items:flex-start; gap:6px; }
+  .req-card li::before { content:'→'; color:var(--accent); flex-shrink:0; }
+
+  .milestone-bar { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--surface2); border-radius:8px; margin-bottom:8px; }
+  .milestone-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+  .milestone-check.done { background:var(--green); border-color:var(--green); }
+  .milestone-check.done::after { content:'✓'; color:#fff; font-size:0.7rem; font-weight:700; }
+  .milestone-text { flex:1; font-size:0.85rem; }
+  .milestone-text.done { text-decoration:line-through; color:var(--text2); }
+  .milestone-deadline { font-size:0.75rem; color:var(--text2); white-space:nowrap; }
+
+  .subject-req { display:flex; align-items:center; gap:12px; padding:10px; background:var(--surface2); border-radius:8px; margin-bottom:6px; }
+  .subject-req .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .subject-req .name { font-weight:600; font-size:0.9rem; }
+  .subject-req .detail { font-size:0.8rem; color:var(--text2); }
+  .subject-req .target { margin-left:auto; font-size:0.8rem; font-weight:600; padding:2px 8px; border-radius:4px; }
+
+  .callout { padding:16px 20px; border-radius:8px; margin-bottom:16px; border-left:4px solid; }
+  .callout.info { background:rgba(59,130,246,0.08); border-color:var(--accent); }
+  .callout.warning { background:rgba(245,158,11,0.08); border-color:var(--amber); }
+  .callout.success { background:rgba(34,197,94,0.08); border-color:var(--green); }
+  .callout h4 { margin-bottom:6px; font-size:0.9rem; }
+  .callout p { font-size:0.85rem; color:var(--text2); }
+
+  .uni-path { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .uni-card { background:var(--surface); border-radius:var(--radius); padding:16px; border:1px solid var(--surface2); }
+  .uni-card h4 { font-size:0.95rem; margin-bottom:8px; }
+  .uni-card .country { font-size:0.8rem; color:var(--accent); margin-bottom:8px; }
+  .uni-card ul { list-style:none; padding:0; }
+  .uni-card li { font-size:0.82rem; color:var(--text2); padding:2px 0; }
+
+  /* Quick Actions Bar */
+  .quick-actions { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .quick-action { display:flex; align-items:center; gap:8px; padding:10px 16px; background:var(--surface); border-radius:8px; cursor:pointer; border:1px solid var(--surface2); transition:all 0.2s; font-size:0.85rem; }
+  .quick-action:hover { border-color:var(--accent); background:rgba(59,130,246,0.05); }
+
+  /* Classroom Assignment Preview */
+  .gc-assignment { background:var(--surface); border-radius:var(--radius); padding:16px; margin-bottom:10px; border-left:3px solid var(--accent); }
+  .gc-assignment-title { font-weight:600; margin-bottom:4px; }
+  .gc-assignment-meta { font-size:0.8rem; color:var(--text2); display:flex; gap:16px; }
+  .gc-assignment-actions { margin-top:10px; display:flex; gap:8px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1><span>Reyansh</span> Sameer Chawan</h1>
+      <div style="color:var(--text2);font-size:0.85rem;margin-top:4px;">Grade 8 &middot; UWCSEA Dover &middot; Surgeon Pathway</div>
+    </div>
+    <div class="header-meta">
+      <div class="week-nav">
+        <button onclick="changeWeek(-1)">&larr;</button>
+        <span id="weekLabel">Week 35</span>
+        <button onclick="changeWeek(1)">&rarr;</button>
+      </div>
+      <div id="overallStatus" class="badge badge-green">All Clear</div>
+      <div id="syncBadge" class="badge badge-blue" title="Last synced with Google Classroom">Synced: Never</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <div class="quick-action" onclick="window.open('https://classroom.google.com','_blank')">
+      <span style="font-size:1.2rem">📚</span> Open Google Classroom
+    </div>
+    <div class="quick-action" onclick="showTab('classroom');switchTabUI(this)">
+      <span style="font-size:1.2rem">📥</span> Import from Classroom
+    </div>
+    <div class="quick-action" onclick="openAddAssignment()">
+      <span style="font-size:1.2rem">➕</span> Add Assignment
+    </div>
+    <div class="quick-action" onclick="exportData()">
+      <span style="font-size:1.2rem">💾</span> Export Backup
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabBar">
+    <button class="tab active" onclick="showTab('overview');switchTabUI(this)"><span class="tab-icon">📊</span>Overview</button>
+    <button class="tab" onclick="showTab('assignments');switchTabUI(this)"><span class="tab-icon">📝</span>Assignments</button>
+    <button class="tab" onclick="showTab('classroom');switchTabUI(this)"><span class="tab-icon">📚</span>Classroom</button>
+    <button class="tab" onclick="showTab('checkin');switchTabUI(this)"><span class="tab-icon">💬</span>Check-in</button>
+    <button class="tab" onclick="showTab('handbook');switchTabUI(this)"><span class="tab-icon">📘</span>Handbook</button>
+    <button class="tab" onclick="showTab('readiness');switchTabUI(this)"><span class="tab-icon">🎯</span>G9 Readiness</button>
+    <button class="tab" onclick="showTab('alerts');switchTabUI(this)"><span class="tab-icon">🔔</span>Alerts</button>
+  </div>
+
+  <!-- OVERVIEW PANEL -->
+  <div id="panel-overview" class="panel active">
+    <div class="grid" id="subjectCards"></div>
+  </div>
+
+  <!-- ASSIGNMENTS PANEL -->
+  <div id="panel-assignments" class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2>Assignments — <span id="assignWeekLabel">Week 35</span></h2>
+      <button class="btn btn-save" onclick="openAddAssignment()">+ Add Assignment</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="tag selected" onclick="filterAssignments('all',this)">All</button>
+      <button class="tag" onclick="filterAssignments('missing',this)">Missing</button>
+      <button class="tag" onclick="filterAssignments('late',this)">Late</button>
+      <button class="tag" onclick="filterAssignments('submitted',this)">Submitted</button>
+      <button class="tag" onclick="filterAssignments('pending',this)">Pending</button>
+      <button class="tag" onclick="filterAssignments('graded',this)">Graded</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Subject</th><th>Assignment</th><th>Due Date</th><th>Status</th><th>Grade</th><th>Feedback</th><th>Source</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="assignmentTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- GOOGLE CLASSROOM PANEL -->
+  <div id="panel-classroom" class="panel">
+    <div class="gc-header">
+      <div>
+        <h2>Google Classroom Integration</h2>
+        <p style="color:var(--text2);font-size:0.85rem;margin-top:4px;">Link your Classroom account to auto-import assignments</p>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="gc-links">
+      <a class="gc-link-card" href="https://classroom.google.com" target="_blank">
+        <div class="gc-link-icon" style="background:rgba(66,133,244,0.15);color:var(--google-blue)">📚</div>
+        <div>
+          <div class="gc-link-title">Open Classroom</div>
+          <div class="gc-link-desc">View all classes, assignments, and grades</div>
+        </div>
+      </a>
+      <a class="gc-link-card" href="https://classroom.google.com/u/0/a/not-turned-in" target="_blank">
+        <div class="gc-link-icon" style="background:rgba(234,67,53,0.15);color:var(--google-red)">⚠️</div>
+        <div>
+          <div class="gc-link-title">Missing Work</div>
+          <div class="gc-link-desc">View not-turned-in assignments</div>
+        </div>
+      </a>
+      <a class="gc-link-card" href="https://classroom.google.com/u/0/a/turned-in" target="_blank">
+        <div class="gc-link-icon" style="background:rgba(52,168,83,0.15);color:var(--google-green)">✅</div>
+        <div>
+          <div class="gc-link-title">Submitted Work</div>
+          <div class="gc-link-desc">View turned-in assignments</div>
+        </div>
+      </a>
+      <a class="gc-link-card" href="https://classroom.google.com/u/0/c/MTI2NjE5NTkxMjQ0" target="_blank">
+        <div class="gc-link-icon" style="background:rgba(251,188,5,0.15);color:var(--google-yellow)">📋</div>
+        <div>
+          <div class="gc-link-title">Guardian Summary</div>
+          <div class="gc-link-desc">Check email for weekly summary</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Sync Status -->
+    <div class="sync-status">
+      <div class="sync-dot manual" id="syncDot"></div>
+      <div>
+        <div style="font-weight:600;" id="syncStatusText">Manual Mode</div>
+        <div style="font-size:0.8rem;color:var(--text2);" id="syncStatusDesc">Paste guardian summary email below to import assignments</div>
+      </div>
+      <button class="btn btn-ghost" style="margin-left:auto;" onclick="openClassroomSettings()">Settings</button>
+    </div>
+
+    <!-- Import from Guardian Summary Email -->
+    <div class="import-zone">
+      <h3>📥 Import from Guardian Summary Email</h3>
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:14px;">
+        Copy the weekly guardian summary email from Google Classroom and paste it below. The parser will extract assignments automatically.
+      </p>
+      <textarea id="importText" placeholder="Paste guardian summary email here...
+
+Example format:
+---
+Mathematics - Due: Aug 30
+  Problem Set 5: Linear Functions (Not turned in)
+
+English - Due: Sep 1
+  Media Bias Essay (Turned in)
+
+Science - Due: Aug 28
+  Lab Report: Light Properties (Graded: 85%)
+---"></textarea>
+      <div class="hint">Supported formats: Guardian summary emails, manual copy-paste from Classroom</div>
+      <div style="margin-top:12px;display:flex;gap:10px;">
+        <button class="btn btn-google" onclick="parseGuardianEmail()">Parse Email</button>
+        <button class="btn btn-ghost" onclick="clearImport()">Clear</button>
+      </div>
+      <div id="parseResult"></div>
+    </div>
+
+    <!-- Manual Quick Add from Classroom -->
+    <div class="import-zone">
+      <h3>⚡ Quick Add from Classroom</h3>
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:14px;">
+        Quickly add an assignment you see in Classroom without leaving this dashboard.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="qcSubject">
+            <option>English</option><option>French</option><option>Mathematics</option>
+            <option>Science</option><option>Humanities</option><option>DesignTechnology</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="qcDue">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Assignment Title</label>
+        <input type="text" id="qcTitle" placeholder="e.g. Problem Set 5: Linear Functions">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-save" onclick="quickAddFromClassroom()">Add to Dashboard</button>
+      </div>
+    </div>
+
+    <!-- Classroom Settings -->
+    <div class="import-zone" id="classroomSettings" style="display:none;">
+      <h3>⚙️ Classroom Settings</h3>
+      <div class="form-group">
+        <label>Classroom URL (optional)</label>
+        <input type="text" id="gcUrl" placeholder="https://classroom.google.com/c/..." value="">
+      </div>
+      <div class="form-group">
+        <label>Guardian Email (for auto-parsing)</label>
+        <input type="email" id="gcEmail" placeholder="parent@email.com">
+      </div>
+      <div class="form-group">
+        <label>Auto-sync Frequency</label>
+        <select id="gcSyncFreq">
+          <option value="manual">Manual (paste email)</option>
+          <option value="daily">Daily (check email)</option>
+          <option value="weekly">Weekly (guardian summary)</option>
+        </select>
+      </div>
+      <button class="btn btn-save" onclick="saveClassroomSettings()">Save Settings</button>
+    </div>
+  </div>
+
+  <!-- CHECK-IN PANEL -->
+  <div id="panel-checkin" class="panel">
+    <h2 style="margin-bottom:16px;">Weekly Check-in — <span id="checkinWeekLabel">Week 35</span></h2>
+    <p style="color:var(--text2);margin-bottom:20px;">15-20 min Sunday evening. One question per subject. Log notes + Reyansh's response.</p>
+    <div class="checkin-grid" id="checkinCards"></div>
+    <div style="margin-top:20px;">
+      <button class="btn btn-save" onclick="saveCheckin()">Save Check-in Notes</button>
+    </div>
+  </div>
+
+  <!-- HANDBOOK PANEL -->
+  <div id="panel-handbook" class="panel">
+    <!-- Hero -->
+    <div class="handbook-hero">
+      <h2>📘 Surgeon Pathway Handbook</h2>
+      <p>Reyansh Sameer Chawan — UWCSEA Dover → Medical School → Neurosurgery</p>
+      <div class="path-line">
+        <span class="path-step current">Grade 8 (Now)</span>
+        <span class="path-arrow">→</span>
+        <span class="path-step future">Grade 9</span>
+        <span class="path-arrow">→</span>
+        <span class="path-step future">Grade 10</span>
+        <span class="path-arrow">→</span>
+        <span class="path-step future">IB Diploma (G11-12)</span>
+        <span class="path-arrow">→</span>
+        <span class="path-step future">University (Medicine)</span>
+        <span class="path-arrow">→</span>
+        <span class="path-step future">Neurosurgery</span>
+      </div>
+    </div>
+
+    <!-- Grade Timeline -->
+    <div class="grade-timeline">
+
+      <!-- GRADE 8 -->
+      <div class="grade-block active" id="gb-g8">
+        <div class="grade-header" onclick="toggleGrade('g8')">
+          <h3>Grade 8 — Foundation Year</h3>
+          <span class="grade-badge active">Current</span>
+          <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);" id="arrow-g8">▼</span>
+        </div>
+        <div class="grade-content" id="gc-g8">
+          <div class="callout info">
+            <h4>🎯 G8 Goal: Build Strong Habits + Academic Foundation</h4>
+            <p>This year is about establishing the study habits and subject foundations that will carry through to IB Diploma. Focus on consistency, not perfection.</p>
+          </div>
+
+          <h4 style="margin-bottom:12px;">Subject Targets</h4>
+          <div class="req-grid">
+            <div class="subject-req">
+              <div class="dot" style="background:#3B82F6"></div>
+              <div><div class="name">English</div><div class="detail">Daily 30min reading, essay structure, critical analysis</div></div>
+              <div class="target" style="background:rgba(59,130,246,0.15);color:#3B82F6">B+</div>
+            </div>
+            <div class="subject-req">
+              <div class="dot" style="background:#8B5CF6"></div>
+              <div><div class="name">French</div><div class="detail">Speaking confidence, listening comprehension, vocabulary</div></div>
+              <div class="target" style="background:rgba(139,92,246,0.15);color:#8B5CF6">B</div>
+            </div>
+            <div class="subject-req">
+              <div class="dot" style="background:#10B981"></div>
+              <div><div class="name">Mathematics</div><div class="detail">Algebra fluency, linear functions, simultaneous equations</div></div>
+              <div class="target" style="background:rgba(16,185,129,0.15);color:#10B981">A-</div>
+            </div>
+            <div class="subject-req">
+              <div class="dot" style="background:#F59E0B"></div>
+              <div><div class="name">Science</div><div class="detail">Lab skills, data handling, conceptual understanding</div></div>
+              <div class="target" style="background:rgba(245,158,11,0.15);color:#F59E0B">A-</div>
+            </div>
+            <div class="subject-req">
+              <div class="dot" style="background:#EF4444"></div>
+              <div><div class="name">Humanities</div><div class="detail">Research skills, argumentation, evidence-based writing</div></div>
+              <div class="target" style="background:rgba(239,68,68,0.15);color:#EF4444">B+</div>
+            </div>
+            <div class="subject-req">
+              <div class="dot" style="background:#EC4899"></div>
+              <div><div class="name">D&T</div><div class="detail">Iteration, systems thinking, prototyping</div></div>
+              <div class="target" style="background:rgba(236,72,153,0.15);color:#EC4899">B</div>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom:12px;">G8 Milestones</h4>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Establish daily 30min reading habit</div><div class="milestone-deadline">Sep 2026</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Weekly Sunday check-in routine with parents</div><div class="milestone-deadline">Sep 2026</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Master Pythagoras + Algebraic Manipulation</div><div class="milestone-deadline">Oct 2026</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Complete first lab report with proper data analysis</div><div class="milestone-deadline">Nov 2026</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Master Linear Functions + Simultaneous Equations</div><div class="milestone-deadline">Jan 2027</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">All subjects at target grade or above</div><div class="milestone-deadline">Mar 2027</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">G9 subject selection finalized</div><div class="milestone-deadline">Q1 2027</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">French speaking confidence rated 2+/3</div><div class="milestone-deadline">Jun 2027</div></div>
+        </div>
+      </div>
+
+      <!-- GRADE 9 -->
+      <div class="grade-block" id="gb-g9">
+        <div class="grade-header" onclick="toggleGrade('g9')">
+          <h3>Grade 9 — High School Entry</h3>
+          <span class="grade-badge upcoming">Upcoming</span>
+          <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);" id="arrow-g9">▶</span>
+        </div>
+        <div class="grade-content collapsed" id="gc-g9">
+          <div class="callout warning">
+            <h4>⚠️ Critical Decision: Subject Selection</h4>
+            <p>Grade 9 subject choices determine your IB Diploma pathway. For medicine, you MUST take Coordinated Science Plus and Mathematics Plus.</p>
+          </div>
+
+          <h4 style="margin-bottom:12px;">Required G9 Subjects (Surgeon Pathway)</h4>
+          <div class="req-grid">
+            <div class="req-card">
+              <h4>🔬 Science: Coordinated Science Plus</h4>
+              <ul>
+                <li>Deeper Bio/Chem/Physics than standard Co-Sci</li>
+                <li>Covers concentration gradients, stoichiometry, genetics</li>
+                <li>Prepares for HL Biology + HL Chemistry in IB</li>
+                <li><strong>Non-negotiable for medicine pathway</strong></li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🔢 Maths: Mathematics Plus</h4>
+              <ul>
+                <li>Advanced problem-solving, calculus intro</li>
+                <li>Matrices, vectors, conic sections</li>
+                <li>Prepares for HL Mathematics in IB</li>
+                <li>Required for competitive medical school applications</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🌍 Humanities: Psychology</h4>
+              <ul>
+                <li>Directly relevant to medicine (patient behavior)</li>
+                <li>Research methods + statistical analysis</li>
+                <li>Can be taken at SL in IB Diploma</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>📖 English: English</h4>
+              <ul>
+                <li>Analytical writing + critical reading</li>
+                <li>Required for IB Diploma</li>
+                <li>Build communication skills for medical interviews</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🇫🇷 French: Foreign Language</h4>
+              <ul>
+                <li>Continue from G8</li>
+                <li>Can be taken at SL in IB</li>
+                <li>Useful for international medical practice</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🔧 Design: Design Technology</h4>
+              <ul>
+                <li>Systems thinking supports surgical precision</li>
+                <li>Prototyping mindset = surgical planning</li>
+                <li>Can be taken at SL in IB</li>
+              </ul>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom:12px;">G9 Milestones</h4>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Enroll in Coordinated Science Plus</div><div class="milestone-deadline">Sep 2027</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Enroll in Mathematics Plus</div><div class="milestone-deadline">Sep 2027</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Maintain A- or above in Science and Maths</div><div class="milestone-deadline">Ongoing</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Write first proper lab report (G9 standard)</div><div class="milestone-deadline">Dec 2027</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Complete Outdoor Education experience</div><div class="milestone-deadline">G9 year</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Begin Service Learning commitment</div><div class="milestone-deadline">G9 year</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Research medical school requirements (UK, SG, AUS)</div><div class="milestone-deadline">Jun 2028</div></div>
+        </div>
+      </div>
+
+      <!-- GRADE 10 -->
+      <div class="grade-block" id="gb-g10">
+        <div class="grade-header" onclick="toggleGrade('g10')">
+          <h3>Grade 10 — IB Preparation</h3>
+          <span class="grade-badge upcoming">Upcoming</span>
+          <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);" id="arrow-g10">▶</span>
+        </div>
+        <div class="grade-content collapsed" id="gc-g10">
+          <div class="callout info">
+            <h4>🎯 G10 Goal: Lock In IB Subject Choices</h4>
+            <p>Grade 10 is when you finalize your IB Diploma subject selections. Your G9-10 grades determine whether you can take HL Sciences.</p>
+          </div>
+
+          <h4 style="margin-bottom:12px;">G10 Requirements</h4>
+          <div class="req-grid">
+            <div class="req-card">
+              <h4>📚 Continue G9 Subjects</h4>
+              <ul>
+                <li>Same 10-course structure as G9</li>
+                <li>Deeper content in all subjects</li>
+                <li>Assessment window builds exam skills</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🎯 IB Subject Selection (End of G10)</h4>
+              <ul>
+                <li>Choose 6 IB subjects (3 HL + 3 SL)</li>
+                <li>Must include: HL Bio, HL Chem, HL Maths</li>
+                <li>SL: English, French, Humanities</li>
+              </ul>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom:12px;">G10 Milestones</h4>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Maintain A- in Science and Maths throughout G10</div><div class="milestone-deadline">Ongoing</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Complete Assessment Window with strong results</div><div class="milestone-deadline">G10 year</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Finalize IB subject choices: HL Bio, HL Chem, HL Maths</div><div class="milestone-deadline">Mar 2029</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Begin university research (medicine programs)</div><div class="milestone-deadline">Jun 2029</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Start volunteering at hospital/clinic (if possible)</div><div class="milestone-deadline">G10 summer</div></div>
+        </div>
+      </div>
+
+      <!-- GRADE 11 (IB Year 1) -->
+      <div class="grade-block" id="gb-g11">
+        <div class="grade-header" onclick="toggleGrade('g11')">
+          <h3>Grade 11 — IB Diploma Year 1</h3>
+          <span class="grade-badge upcoming">Upcoming</span>
+          <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);" id="arrow-g11">▶</span>
+        </div>
+        <div class="grade-content collapsed" id="gc-g11">
+          <div class="callout warning">
+            <h4>⚠️ Heavy Workload Year</h4>
+            <p>IB Year 1 is the most academically demanding year. Time management and consistent effort are critical. No cramming.</p>
+          </div>
+
+          <h4 style="margin-bottom:12px;">IB Diploma Subject Plan</h4>
+          <div class="req-grid">
+            <div class="req-card">
+              <h4>🔴 Higher Level (HL)</h4>
+              <ul>
+                <li><strong>Biology HL</strong> — Cell biology, genetics, evolution, ecology</li>
+                <li><strong>Chemistry HL</strong> — Organic, inorganic, physical chemistry</li>
+                <li><strong>Mathematics HL</strong> — Calculus, statistics, proof</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🔵 Standard Level (SL)</h4>
+              <ul>
+                <li><strong>English SL</strong> — Literature analysis, essay writing</li>
+                <li><strong>French SL</strong> — Language acquisition</li>
+                <li><strong>Psychology SL</strong> — Or Economics/History</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>📝 Core Requirements</h4>
+              <ul>
+                <li>Extended Essay (4000 words) — choose Bio or Chem topic</li>
+                <li>Theory of Knowledge (TOK)</li>
+                <li>Creativity, Activity, Service (CAS)</li>
+              </ul>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom:12px;">Target IB Grades</h4>
+          <div class="subject-req"><div class="dot" style="background:#EF4444"></div><div class="name">Biology HL</div><div class="target" style="background:rgba(239,68,68,0.15);color:#EF4444">6 or 7</div></div>
+          <div class="subject-req"><div class="dot" style="background:#F59E0B"></div><div class="name">Chemistry HL</div><div class="target" style="background:rgba(245,158,11,0.15);color:#F59E0B">6 or 7</div></div>
+          <div class="subject-req"><div class="dot" style="background:#10B981"></div><div class="name">Mathematics HL</div><div class="target" style="background:rgba(16,185,129,0.15);color:#10B981">6 or 7</div></div>
+          <div class="subject-req"><div class="dot" style="background:#3B82F6"></div><div class="name">English SL</div><div class="target" style="background:rgba(59,130,246,0.15);color:#3B82F6">5 or 6</div></div>
+          <div class="subject-req"><div class="dot" style="background:#8B5CF6"></div><div class="name">French SL</div><div class="target" style="background:rgba(139,92,246,0.15);color:#8B5CF6">5 or 6</div></div>
+          <div class="subject-req"><div class="dot" style="background:#EC4899"></div><div class="name">Psychology SL</div><div class="target" style="background:rgba(236,72,153,0.15);color:#EC4899">5 or 6</div></div>
+          <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+            <div style="font-size:0.85rem;color:var(--text2);">Total IB Score Target</div>
+            <div style="font-size:2rem;font-weight:700;color:var(--accent);">38-40 / 45</div>
+            <div style="font-size:0.8rem;color:var(--text2);">UWCSEA Average: 36.4 | Top UK Med Schools: 38-40</div>
+          </div>
+
+          <h4 style="margin:16px 0 12px;">G11 Milestones</h4>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Choose Extended Essay topic (Bio or Chem)</div><div class="milestone-deadline">Sep 2029</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Begin hospital/clinic volunteering</div><div class="milestone-deadline">Oct 2029</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Register for UCAT/BMAT (if targeting UK)</div><div class="milestone-deadline">Jan 2030</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Complete CAS requirements</div><div class="milestone-deadline">Ongoing</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Maintain 38+ predicted score</div><div class="milestone-deadline">Ongoing</div></div>
+        </div>
+      </div>
+
+      <!-- GRADE 12 (IB Year 2) -->
+      <div class="grade-block" id="gb-g12">
+        <div class="grade-header" onclick="toggleGrade('g12')">
+          <h3>Grade 12 — IB Diploma Year 2 + University Applications</h3>
+          <span class="grade-badge upcoming">Upcoming</span>
+          <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);" id="arrow-g12">▶</span>
+        </div>
+        <div class="grade-content collapsed" id="gc-g12">
+          <div class="callout warning">
+            <h4>⚠️ Application Year — Everything Matters</h4>
+            <p>Grade 12 is when you apply to university. Predicted IB grades, UCAT/BMAT scores, personal statement, and interview performance all count.</p>
+          </div>
+
+          <h4 style="margin-bottom:12px;">University Application Targets</h4>
+          <div class="uni-path">
+            <div class="uni-card">
+              <h4>🇬🇧 United Kingdom</h4>
+              <div class="country">Top Medical Schools</div>
+              <ul>
+                <li>Oxford / Cambridge (A*AA equivalent)</li>
+                <li>Imperial College London</li>
+                <li>UCL Medical School</li>
+                <li>King's College London</li>
+                <li>Edinburgh / Glasgow</li>
+              </ul>
+              <div style="margin-top:8px;font-size:0.8rem;color:var(--accent);">UCAT + Interview required</div>
+            </div>
+            <div class="uni-card">
+              <h4>🇸🇬 Singapore</h4>
+              <div class="country">Local Medical Schools</div>
+              <ul>
+                <li>NUS Yong Loo Lin School of Medicine</li>
+                <li>NTU Lee Kong Chian School of Medicine</li>
+                <li>Duke-NUS Medical School (postgrad)</li>
+              </ul>
+              <div style="margin-top:8px;font-size:0.8rem;color:var(--accent);">Very competitive — need 40+ IB</div>
+            </div>
+            <div class="uni-card">
+              <h4>🇦🇺 Australia</h4>
+              <div class="country">Medical Programs</div>
+              <ul>
+                <li>University of Melbourne</li>
+                <li>University of Sydney</li>
+                <li>Monash University</li>
+                <li>University of Queensland</li>
+              </ul>
+              <div style="margin-top:8px;font-size:0.8rem;color:var(--accent);">UCAT or ISAT required</div>
+            </div>
+            <div class="uni-card">
+              <h4>🇺🇸 United States</h4>
+              <div class="country">Pre-Med Pathway</div>
+              <ul>
+                <li>Pre-Med undergrad (4 years)</li>
+                <li>Then Medical School (4 years)</li>
+                <li>Johns Hopkins, Harvard, Stanford</li>
+                <li>Longer pathway but top neurosurgery training</li>
+              </ul>
+              <div style="margin-top:8px;font-size:0.8rem;color:var(--accent);">SAT + AP courses recommended</div>
+            </div>
+          </div>
+
+          <h4 style="margin:20px 0 12px;">G12 Milestones</h4>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Complete UCAT/BMAT exam</div><div class="milestone-deadline">Sep 2030</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Submit UCAS application (UK)</div><div class="milestone-deadline">Oct 2030</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Write personal statement (medicine-focused)</div><div class="milestone-deadline">Oct 2030</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Attend medical school interviews</div><div class="milestone-deadline">Nov 2030 - Feb 2031</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Receive university offers</div><div class="milestone-deadline">Jan - Mar 2031</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">IB Final Exams — achieve 38+</div><div class="milestone-deadline">May 2031</div></div>
+          <div class="milestone-bar"><div class="milestone-check" onclick="toggleMilestone(this)"></div><div class="milestone-text">Graduate UWCSEA with High School Diploma</div><div class="milestone-deadline">Jun 2031</div></div>
+        </div>
+      </div>
+
+      <!-- MEDICAL SCHOOL -->
+      <div class="grade-block" id="gb-med">
+        <div class="grade-header" onclick="toggleGrade('med')">
+          <h3>Medical School → Neurosurgery</h3>
+          <span class="grade-badge upcoming">Future</span>
+          <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);" id="arrow-med">▶</span>
+        </div>
+        <div class="grade-content collapsed" id="gc-med">
+          <div class="callout success">
+            <h4>🏥 The Long Road to Neurosurgery</h4>
+            <p>Neurosurgery is one of the most competitive medical specialties. It requires 15+ years of training after high school. Here's the pathway.</p>
+          </div>
+
+          <div class="req-grid">
+            <div class="req-card">
+              <h4>🎓 Medical School (4-6 years)</h4>
+              <ul>
+                <li>UK: 5-6 year MBBS/MBChB program</li>
+                <li>Singapore: 5 year MBBS at NUS/NTU</li>
+                <li>Australia: 5-6 year program</li>
+                <li>USA: 4 year pre-med + 4 year MD</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🏥 Foundation/Intern Years (2-3 years)</h4>
+              <ul>
+                <li>UK: Foundation Programme (F1-F2)</li>
+                <li>Singapore: Housemanship</li>
+                <li>General medical rotations</li>
+                <li>Decide on surgical specialty</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>🧠 Neurosurgery Training (6-8 years)</h4>
+              <ul>
+                <li>Core surgical training (2-3 years)</li>
+                <li>Specialist neurosurgery registrar (4-5 years)</li>
+                <li>FRCS (Neurosurgery) examination</li>
+                <li>Sub-specialty fellowship (1-2 years)</li>
+              </ul>
+            </div>
+            <div class="req-card">
+              <h4>💡 Key Qualities for Neurosurgeons</h4>
+              <ul>
+                <li>Exceptional manual dexterity</li>
+                <li>Ability to work under extreme pressure</li>
+                <li>Strong analytical + spatial reasoning</li>
+                <li>Empathy + communication skills</li>
+                <li>15+ years of continuous learning</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout info" style="margin-top:16px;">
+            <h4>📚 What Reyansh Can Do Now</h4>
+            <p>Beyond academics, start building the qualities neurosurgeons need: precision (cubing helps!), focus under pressure, empathy (service learning), and curiosity about the human body. Read books like "Do No Harm" by Henry Marsh or "When Breath Becomes Air" by Paul Kalanithi.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end grade-timeline -->
+  </div>
+
+  <!-- G9 READINESS PANEL -->
+  <div id="panel-readiness" class="panel">
+    <h2 style="margin-bottom:16px;">G9 Transition Readiness</h2>
+    <p style="color:var(--text2);margin-bottom:20px;">Rate each dimension 1-3. Track progress over time. Target: all 3s by end of G8.</p>
+    <div class="readiness-grid" id="readinessCards"></div>
+    <div style="margin-top:20px;padding:20px;background:var(--surface);border-radius:var(--radius);border-left:4px solid var(--accent);">
+      <h3 style="margin-bottom:10px;">Recommended G9 Subjects (Surgeon Pathway)</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+        <div style="padding:10px;background:var(--surface2);border-radius:8px;"><strong>Science:</strong> Coordinated Science Plus</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:8px;"><strong>Maths:</strong> Mathematics Plus</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:8px;"><strong>Humanities:</strong> Psychology</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:8px;"><strong>IB HL Target:</strong> Bio, Chem, Maths</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTS PANEL -->
+  <div id="panel-alerts" class="panel">
+    <h2 style="margin-bottom:16px;">Active Alerts</h2>
+    <div class="alerts-list" id="alertsList"></div>
+  </div>
+</div>
+
+<!-- Add Assignment Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h2 id="modalTitle">Add Assignment</h2>
+    <input type="hidden" id="editIdx" value="-1">
+    <div class="form-group">
+      <label>Subject</label>
+      <select id="fSubject">
+        <option>English</option><option>French</option><option>Mathematics</option>
+        <option>Science</option><option>Humanities</option><option>DesignTechnology</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Assignment Title</label>
+      <input type="text" id="fTitle" placeholder="e.g. Media Bias Essay">
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="fType">
+        <option>Homework</option><option>Essay</option><option>Lab Report</option>
+        <option>Project</option><option>Test</option><option>Reading Log</option>
+        <option>Problem Set</option><option>Speaking Task</option><option>Design Project</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Due Date</label>
+      <input type="date" id="fDue">
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="fStatus">
+        <option value="pending">Pending</option>
+        <option value="submitted">Submitted On Time</option>
+        <option value="late">Submitted Late</option>
+        <option value="missing">Missing</option>
+        <option value="graded">Graded</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Grade (optional)</label>
+      <input type="text" id="fGrade" placeholder="e.g. 85%, A, B+">
+    </div>
+    <div class="form-group">
+      <label>Feedback Seen?</label>
+      <select id="fFeedback">
+        <option value="no">No</option><option value="yes">Yes</option>
+        <option value="na">N/A (not returned yet)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Source</label>
+      <select id="fSource">
+        <option value="manual">Manual</option>
+        <option value="classroom">Google Classroom</option>
+        <option value="guardian_email">Guardian Email</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="fNotes" rows="2" placeholder="Optional notes..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="deleteBtn" style="display:none;margin-right:auto;" onclick="deleteAssignment()">Delete</button>
+      <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-save" onclick="saveAssignment()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Classroom Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>Google Classroom Settings</h2>
+    <div class="form-group">
+      <label>Classroom URL</label>
+      <input type="text" id="setUrl" placeholder="https://classroom.google.com/c/...">
+    </div>
+    <div class="form-group">
+      <label>Guardian Email</label>
+      <input type="email" id="setEmail" placeholder="parent@email.com">
+    </div>
+    <div class="form-group">
+      <label>Sync Mode</label>
+      <select id="setSyncMode">
+        <option value="manual">Manual (paste email)</option>
+        <option value="email_parse">Auto-parse guardian emails</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="document.getElementById('settingsModal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-save" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUBJECTS = {
+  English: { color:'#3B82F6', icon:'📖', periods:6,
+    units:['Lifelong Readers','Language and Power','Literary Essay','Historical Fiction','Personal Essay'],
+    questions:[
+      'What did you learn from the teacher\'s feedback on your last essay?',
+      'Which book are you reading right now? Are you enjoying it?',
+      'Can you show me your reading log for this week?'
+    ]
+  },
+  French: { color:'#8B5CF6', icon:'🇫🇷', periods:5,
+    units:['Education','Transport','Leisure','Celebrations','Health','Technology'],
+    questions:[
+      'Which part felt hardest — speaking, listening, reading, or writing?',
+      'Can you say one thing in French you learned this week?',
+      'Did you practice any French outside of class?'
+    ]
+  },
+  Mathematics: { color:'#10B981', icon:'🔢', periods:5,
+    units:['Pythagoras','Algebraic Manipulation','Indices','Linear Functions','Bivariate Data','Angle Properties','Simultaneous Equations'],
+    questions:[
+      'Which type of question slowed you down this week?',
+      'Did you get your test back? What feedback did you get?',
+      'Is there a concept you find confusing?'
+    ]
+  },
+  Science: { color:'#F59E0B', icon:'🔬', periods:5,
+    units:['Genetics','Light Properties','Science Festival','Chemistry in Environment','Forces and Motion'],
+    questions:[
+      'What did your last investigation teach you about data or evidence?',
+      'Can you explain this week\'s science concept in your own words?',
+      'Did you complete your lab report?'
+    ]
+  },
+  Humanities: { color:'#EF4444', icon:'🌍', periods:5,
+    units:['Powering Progress','Future Cities','Legacies','Food on the Move','Governance'],
+    questions:[
+      'How are you backing your opinions with evidence?',
+      'What\'s the most interesting thing you discovered?',
+      'Can you show me your project progress?'
+    ]
+  },
+  DesignTechnology: { color:'#EC4899', icon:'🔧', periods:3,
+    units:['Product Design','Systems Thinking','Food & Nutrition'],
+    questions:[
+      'How did you improve your design between prototypes?',
+      'What feedback did you get on your design?',
+      'What problem are you solving with your current project?'
+    ]
+  }
+};
+
+const READINESS = {
+  'Reading Stamina': { target:3, subject:'English' },
+  'Writing Clarity': { target:3, subject:'English' },
+  'Algebraic Fluency': { target:3, subject:'Mathematics' },
+  'Scientific Reasoning': { target:3, subject:'Science' },
+  'Research Skills': { target:2, subject:'Humanities' },
+  'French Speaking': { target:2, subject:'French' },
+  'French Listening': { target:2, subject:'French' },
+  'Homework Timeliness': { target:3, subject:'All' },
+  'Using Feedback': { target:3, subject:'All' },
+  'Self-Reflection': { target:2, subject:'All' }
+};
+
+// Subject name mapping for Classroom imports
+const SUBJECT_MAP = {
+  'english': 'English', 'ela': 'English', 'language arts': 'English', 'reading': 'English', 'writing': 'English',
+  'french': 'French', 'français': 'French', 'francais': 'French', 'lote': 'French', 'language': 'French',
+  'math': 'Mathematics', 'maths': 'Mathematics', 'mathematics': 'Mathematics', 'algebra': 'Mathematics', 'geometry': 'Mathematics',
+  'science': 'Science', 'biology': 'Science', 'chemistry': 'Science', 'physics': 'Science', 'bio': 'Science', 'chem': 'Science',
+  'humanities': 'Humanities', 'history': 'Humanities', 'geography': 'Humanities', 'social studies': 'Humanities',
+  'design': 'DesignTechnology', 'technology': 'DesignTechnology', 'd&t': 'DesignTechnology', 'dt': 'DesignTechnology', 'design technology': 'DesignTechnology'
+};
+
+let currentWeek = getWeekNumber(new Date());
+let currentFilter = 'all';
+
+// --- Storage ---
+function getData() { return JSON.parse(localStorage.getItem('reyansh_g8') || '{}'); }
+function saveData(d) { localStorage.setItem('reyansh_g8', JSON.stringify(d)); }
+function weekKey(w) { return 'week_' + w; }
+
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+}
+
+// --- Week Nav ---
+function changeWeek(delta) {
+  currentWeek = Math.max(1, Math.min(52, currentWeek + delta));
+  updateWeekLabels();
+  renderAll();
+}
+function updateWeekLabels() {
+  const lbl = 'Week ' + currentWeek;
+  document.getElementById('weekLabel').textContent = lbl;
+  document.getElementById('assignWeekLabel').textContent = lbl;
+  document.getElementById('checkinWeekLabel').textContent = lbl;
+}
+
+// --- Tabs ---
+function showTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+function switchTabUI(btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (btn && btn.classList) btn.classList.add('active');
+}
+
+// --- Toast ---
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
+
+// --- Render Subject Cards ---
+function renderCards() {
+  const data = getData();
+  const wk = data[weekKey(currentWeek)] || {};
+  const assignments = wk.assignments || [];
+  const container = document.getElementById('subjectCards');
+  container.innerHTML = '';
+  let totalMissing = 0;
+
+  for (const [name, info] of Object.entries(SUBJECTS)) {
+    const sub = assignments.filter(a => a.subject === name);
+    const submitted = sub.filter(a => a.status === 'submitted' || a.status === 'graded').length;
+    const late = sub.filter(a => a.status === 'late').length;
+    const missing = sub.filter(a => a.status === 'missing').length;
+    const pending = sub.filter(a => a.status === 'pending').length;
+    const graded = sub.filter(a => a.status === 'graded').length;
+    const feedbackSeen = sub.filter(a => a.feedback === 'yes').length;
+    const fromClassroom = sub.filter(a => a.source === 'classroom' || a.source === 'guardian_email').length;
+    totalMissing += missing;
+
+    let status = 'green';
+    if (missing >= 3) status = 'red';
+    else if (missing >= 1 || late >= 2) status = 'amber';
+
+    let sparkHTML = '<div class="sparkline">';
+    for (let w = currentWeek - 3; w <= currentWeek; w++) {
+      const wData = (data[weekKey(w)] || {}).assignments || [];
+      const wSub = wData.filter(a => a.subject === name);
+      const wTotal = wSub.length || 1;
+      const wOnTime = wSub.filter(a => a.status === 'submitted' || a.status === 'graded').length;
+      const pct = (wOnTime / wTotal) * 100;
+      const cls = pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
+      sparkHTML += `<div class="spark-bar ${cls}" style="height:${Math.max(4,pct*0.24)}px" title="W${w}: ${Math.round(pct)}%"></div>`;
+    }
+    sparkHTML += '</div>';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.borderTopColor = info.color;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-title">
+          <div class="card-icon" style="background:${info.color}22;color:${info.color}">${info.icon}</div>
+          ${name}
+          ${fromClassroom > 0 ? '<span style="font-size:0.65rem;background:rgba(66,133,244,0.15);color:#4285f4;padding:2px 6px;border-radius:4px;">📚 Classroom</span>' : ''}
+        </div>
+        <div class="status-dot ${status}"></div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-val">${sub.length}</div><div class="stat-label">Total</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--green)">${submitted}</div><div class="stat-label">Done</div></div>
+        <div class="stat"><div class="stat-val" style="color:${missing>0?'var(--red)':'var(--text2)'}">${missing}</div><div class="stat-label">Missing</div></div>
+      </div>
+      <div style="display:flex;gap:16px;font-size:0.8rem;color:var(--text2);">
+        <span>Late: ${late}</span>
+        <span>Pending: ${pending}</span>
+        <span>Graded: ${graded}</span>
+        <span>Feedback: ${feedbackSeen}/${sub.length}</span>
+      </div>
+      ${sparkHTML}
+      <div class="card-actions">
+        <button class="btn-sm btn-primary" onclick="openAddAssignment('${name}')">+ Add</button>
+        <button class="btn-sm btn-ghost" onclick="showTab('assignments');switchTabUI(document.querySelectorAll('.tab')[1]);filterAssignments('${name}',null)">View All</button>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+
+  const badge = document.getElementById('overallStatus');
+  if (totalMissing >= 3) { badge.className = 'badge badge-red'; badge.textContent = `${totalMissing} Missing`; }
+  else if (totalMissing >= 1) { badge.className = 'badge badge-amber'; badge.textContent = `${totalMissing} Missing`; }
+  else { badge.className = 'badge badge-green'; badge.textContent = 'All Clear'; }
+}
+
+// --- Render Assignments ---
+function renderAssignments() {
+  const data = getData();
+  const wk = data[weekKey(currentWeek)] || {};
+  const assignments = wk.assignments || [];
+  const tbody = document.getElementById('assignmentTable');
+  tbody.innerHTML = '';
+
+  let filtered = assignments;
+  if (currentFilter === 'missing') filtered = assignments.filter(a => a.status === 'missing');
+  else if (currentFilter === 'late') filtered = assignments.filter(a => a.status === 'late');
+  else if (currentFilter === 'submitted') filtered = assignments.filter(a => a.status === 'submitted');
+  else if (currentFilter === 'pending') filtered = assignments.filter(a => a.status === 'pending');
+  else if (currentFilter === 'graded') filtered = assignments.filter(a => a.status === 'graded');
+  else if (SUBJECTS[currentFilter]) filtered = assignments.filter(a => a.subject === currentFilter);
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text2);padding:40px;">No assignments. Click "+ Add" or import from Google Classroom.</td></tr>';
+    return;
+  }
+
+  filtered.forEach((a) => {
+    const origIdx = assignments.indexOf(a);
+    const statusClass = {submitted:'status-submitted',late:'status-late',missing:'status-missing',pending:'status-pending',graded:'status-graded'}[a.status]||'status-pending';
+    const statusLabel = {submitted:'Submitted',late:'Late',missing:'Missing',pending:'Pending',graded:'Graded'}[a.status]||a.status;
+    const feedbackLabel = a.feedback === 'yes' ? '✅' : a.feedback === 'na' ? '—' : '❌';
+    const sourceIcon = a.source === 'classroom' ? '📚' : a.source === 'guardian_email' ? '📧' : '✏️';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="color:${SUBJECTS[a.subject]?.color||'#fff'};font-weight:600;">${a.subject}</span></td>
+      <td>${a.title}<div style="font-size:0.75rem;color:var(--text2)">${a.type||''}</div></td>
+      <td>${a.due || '—'}</td>
+      <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+      <td>${a.grade || '—'}</td>
+      <td>${feedbackLabel}</td>
+      <td title="${a.source||'manual'}">${sourceIcon}</td>
+      <td><button class="btn-sm btn-ghost" onclick="editAssignment(${origIdx})">Edit</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterAssignments(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('#panel-assignments .tag').forEach(t => t.classList.remove('selected'));
+  if (btn) btn.classList.add('selected');
+  renderAssignments();
+}
+
+// --- Assignment Modal ---
+function openAddAssignment(subject) {
+  document.getElementById('editIdx').value = -1;
+  document.getElementById('modalTitle').textContent = 'Add Assignment';
+  document.getElementById('fSubject').value = subject || 'English';
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fType').value = 'Homework';
+  document.getElementById('fDue').value = '';
+  document.getElementById('fStatus').value = 'pending';
+  document.getElementById('fGrade').value = '';
+  document.getElementById('fFeedback').value = 'na';
+  document.getElementById('fSource').value = 'manual';
+  document.getElementById('fNotes').value = '';
+  document.getElementById('deleteBtn').style.display = 'none';
+  document.getElementById('addModal').classList.add('show');
+}
+
+function editAssignment(idx) {
+  const data = getData();
+  const wk = data[weekKey(currentWeek)] || {};
+  const a = (wk.assignments || [])[idx];
+  if (!a) return;
+  document.getElementById('editIdx').value = idx;
+  document.getElementById('modalTitle').textContent = 'Edit Assignment';
+  document.getElementById('fSubject').value = a.subject;
+  document.getElementById('fTitle').value = a.title;
+  document.getElementById('fType').value = a.type || 'Homework';
+  document.getElementById('fDue').value = a.due || '';
+  document.getElementById('fStatus').value = a.status;
+  document.getElementById('fGrade').value = a.grade || '';
+  document.getElementById('fFeedback').value = a.feedback || 'na';
+  document.getElementById('fSource').value = a.source || 'manual';
+  document.getElementById('fNotes').value = a.notes || '';
+  document.getElementById('deleteBtn').style.display = 'inline-block';
+  document.getElementById('addModal').classList.add('show');
+}
+
+function closeModal() { document.getElementById('addModal').classList.remove('show'); }
+
+function saveAssignment() {
+  const data = getData();
+  const key = weekKey(currentWeek);
+  if (!data[key]) data[key] = {};
+  if (!data[key].assignments) data[key].assignments = [];
+
+  const entry = {
+    subject: document.getElementById('fSubject').value,
+    title: document.getElementById('fTitle').value,
+    type: document.getElementById('fType').value,
+    due: document.getElementById('fDue').value,
+    status: document.getElementById('fStatus').value,
+    grade: document.getElementById('fGrade').value,
+    feedback: document.getElementById('fFeedback').value,
+    source: document.getElementById('fSource').value,
+    notes: document.getElementById('fNotes').value
+  };
+
+  const idx = parseInt(document.getElementById('editIdx').value);
+  if (idx >= 0) { data[key].assignments[idx] = entry; }
+  else { data[key].assignments.push(entry); }
+
+  saveData(data); closeModal(); renderAll();
+  toast(idx >= 0 ? 'Assignment updated' : 'Assignment added');
+}
+
+function deleteAssignment() {
+  const data = getData();
+  const key = weekKey(currentWeek);
+  const idx = parseInt(document.getElementById('editIdx').value);
+  if (idx >= 0 && data[key]?.assignments) { data[key].assignments.splice(idx, 1); saveData(data); }
+  closeModal(); renderAll(); toast('Assignment deleted');
+}
+
+// --- Google Classroom: Guardian Email Parser ---
+function parseGuardianEmail() {
+  const text = document.getElementById('importText').value.trim();
+  if (!text) { toast('Paste guardian email first'); return; }
+
+  const parsed = [];
+  const lines = text.split('\n');
+  let currentSubject = null;
+
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) continue;
+
+    // Try to match subject headers like "Mathematics - Due: Aug 30" or "English:"
+    const subjectMatch = line.match(/^([A-Za-z&\s]+?)[\s]*[-:]\s*(?:Due[:\s]*)?(\w+\s+\d{1,2})?/i);
+    if (subjectMatch) {
+      const rawSubject = subjectMatch[1].trim().toLowerCase();
+      for (const [key, val] of Object.entries(SUBJECT_MAP)) {
+        if (rawSubject.includes(key)) { currentSubject = val; break; }
+      }
+      if (!currentSubject) currentSubject = subjectMatch[1].trim();
+    }
+
+    // Match assignment lines like "  Problem Set 5 (Not turned in)" or "  Essay - Graded: 85%"
+    const assignMatch = line.match(/^\s*[-•]?\s*(.+?)(?:\s*\((.+?)\))?$/);
+    if (assignMatch && currentSubject && line.length > 3 && !line.match(/^(due|date|class|teacher)/i)) {
+      const title = assignMatch[1].trim();
+      const meta = (assignMatch[2] || '').toLowerCase();
+
+      let status = 'pending';
+      let grade = '';
+      let feedback = 'na';
+
+      if (meta.includes('not turned in') || meta.includes('missing') || meta.includes('not submitted')) status = 'missing';
+      else if (meta.includes('turned in') || meta.includes('submitted')) status = 'submitted';
+      else if (meta.includes('late')) status = 'late';
+      else if (meta.includes('graded') || meta.includes('returned')) {
+        status = 'graded';
+        const gradeMatch = meta.match(/(\d+%?|[A-F][+-]?)/);
+        if (gradeMatch) grade = gradeMatch[1];
+        feedback = 'yes';
+      }
+
+      // Extract due date from meta or subject line
+      let due = '';
+      const dueMatch = meta.match(/due[:\s]*(\w+\s+\d{1,2})/i) || line.match(/due[:\s]*(\w+\s+\d{1,2})/i);
+      if (dueMatch) due = dueMatch[1];
+
+      parsed.push({ subject: currentSubject, title, status, grade, feedback, due, source: 'guardian_email' });
+    }
+  }
+
+  // Also try simpler format: one assignment per line with subject prefix
+  if (parsed.length === 0) {
+    const simpleLines = text.split('\n').filter(l => l.trim().length > 5);
+    for (const line of simpleLines) {
+      const m = line.match(/^([A-Za-z&\s]+?)\s*[-:]\s*(.+)/);
+      if (m) {
+        const rawSub = m[1].trim().toLowerCase();
+        let subject = null;
+        for (const [key, val] of Object.entries(SUBJECT_MAP)) {
+          if (rawSub.includes(key)) { subject = val; break; }
+        }
+        if (subject) {
+          parsed.push({ subject, title: m[2].trim(), status: 'pending', grade: '', feedback: 'na', due: '', source: 'guardian_email' });
+        }
+      }
+    }
+  }
+
+  displayParseResult(parsed);
+}
+
+function displayParseResult(parsed) {
+  const container = document.getElementById('parseResult');
+  if (parsed.length === 0) {
+    container.innerHTML = '<div style="color:var(--red);margin-top:12px;">Could not parse any assignments. Try pasting the full guardian summary email or use Quick Add below.</div>';
+    return;
+  }
+
+  let html = '<div class="parser-result"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><strong>Found ' + parsed.length + ' assignments:</strong>';
+  html += '<button class="btn btn-save" onclick="importParsed()">Import All</button></div>';
+
+  parsed.forEach((p, i) => {
+    const statusClass = {submitted:'status-submitted',late:'status-late',missing:'status-missing',pending:'status-pending',graded:'status-graded'}[p.status]||'status-pending';
+    html += `<div class="parser-item">
+      <div class="parser-check selected" onclick="this.classList.toggle('selected')" data-idx="${i}"></div>
+      <div style="flex:1;">
+        <div style="font-weight:600;">${p.title}</div>
+        <div style="font-size:0.8rem;color:var(--text2);">${p.subject} &middot; ${p.due||'No due date'} &middot; <span class="status-badge ${statusClass}">${p.status}</span></div>
+      </div>
+    </div>`;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  // Store parsed data temporarily
+  window._parsedAssignments = parsed;
+}
+
+function importParsed() {
+  const parsed = window._parsedAssignments || [];
+  const checks = document.querySelectorAll('.parser-check.selected');
+  const selected = Array.from(checks).map(c => parseInt(c.dataset.idx)).filter(i => !isNaN(i));
+
+  if (selected.length === 0) { toast('Select assignments to import'); return; }
+
+  const data = getData();
+  const key = weekKey(currentWeek);
+  if (!data[key]) data[key] = {};
+  if (!data[key].assignments) data[key].assignments = [];
+
+  for (const i of selected) {
+    const p = parsed[i];
+    // Check for duplicates
+    const exists = data[key].assignments.some(a => a.title === p.title && a.subject === p.subject);
+    if (!exists) {
+      data[key].assignments.push({
+        subject: p.subject,
+        title: p.title,
+        type: 'Homework',
+        due: p.due || '',
+        status: p.status,
+        grade: p.grade || '',
+        feedback: p.feedback || 'na',
+        source: 'guardian_email',
+        notes: 'Imported from guardian summary'
+      });
+    }
+  }
+
+  saveData(data);
+  renderAll();
+  document.getElementById('parseResult').innerHTML = '';
+  document.getElementById('importText').value = '';
+
+  // Update sync badge
+  const now = new Date().toLocaleString();
+  document.getElementById('syncBadge').textContent = 'Synced: ' + now;
+  document.getElementById('syncDot').className = 'sync-dot connected';
+  document.getElementById('syncStatusText').textContent = 'Last Synced: ' + now;
+  document.getElementById('syncStatusDesc').textContent = selected.length + ' assignments imported from guardian email';
+
+  toast(`Imported ${selected.length} assignments`);
+}
+
+function clearImport() {
+  document.getElementById('importText').value = '';
+  document.getElementById('parseResult').innerHTML = '';
+}
+
+// --- Quick Add from Classroom ---
+function quickAddFromClassroom() {
+  const title = document.getElementById('qcTitle').value.trim();
+  if (!title) { toast('Enter assignment title'); return; }
+
+  const data = getData();
+  const key = weekKey(currentWeek);
+  if (!data[key]) data[key] = {};
+  if (!data[key].assignments) data[key].assignments = [];
+
+  data[key].assignments.push({
+    subject: document.getElementById('qcSubject').value,
+    title: title,
+    type: 'Homework',
+    due: document.getElementById('qcDue').value || '',
+    status: 'pending',
+    grade: '',
+    feedback: 'na',
+    source: 'classroom',
+    notes: 'Added from Google Classroom'
+  });
+
+  saveData(data);
+  document.getElementById('qcTitle').value = '';
+  renderAll();
+  toast('Assignment added from Classroom');
+}
+
+// --- Classroom Settings ---
+function openClassroomSettings() {
+  const data = getData();
+  const settings = data.classroom_settings || {};
+  document.getElementById('setUrl').value = settings.url || '';
+  document.getElementById('setEmail').value = settings.email || '';
+  document.getElementById('setSyncMode').value = settings.sync_mode || 'manual';
+  document.getElementById('settingsModal').classList.add('show');
+}
+
+function saveSettings() {
+  const data = getData();
+  data.classroom_settings = {
+    url: document.getElementById('setUrl').value,
+    email: document.getElementById('setEmail').value,
+    sync_mode: document.getElementById('setSyncMode').value
+  };
+  saveData(data);
+  document.getElementById('settingsModal').classList.remove('show');
+  toast('Settings saved');
+}
+
+// --- Check-in ---
+function renderCheckin() {
+  const data = getData();
+  const wk = data[weekKey(currentWeek)] || {};
+  const notes = wk.checkin || {};
+  const container = document.getElementById('checkinCards');
+  container.innerHTML = '';
+
+  for (const [name, info] of Object.entries(SUBJECTS)) {
+    const q = info.questions[Math.floor(Math.random() * info.questions.length)];
+    const card = document.createElement('div');
+    card.className = 'checkin-card';
+    card.innerHTML = `
+      <h3><span style="color:${info.color}">${info.icon}</span> ${name}</h3>
+      <div class="checkin-question">Ask Reyansh: "${q}"</div>
+      <textarea id="note_${name}" placeholder="Your notes + Reyansh's response...">${notes[name] || ''}</textarea>
+      <div class="tag-row">
+        ${['effort','focus','confidence','time_management'].map(t =>
+          `<button class="tag ${(notes[name+'_tags']||[]).includes(t)?'selected':''}" onclick="toggleTag(this,'${name}','${t}')">${t.replace('_',' ')}</button>`
+        ).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  }
+
+  const summaryCard = document.createElement('div');
+  summaryCard.className = 'checkin-card';
+  summaryCard.style.gridColumn = '1 / -1';
+  summaryCard.innerHTML = `
+    <h3>📝 Parent Summary</h3>
+    <textarea id="parentSummary" rows="3" placeholder="Overall observations, action items, things to celebrate...">${notes.parent_summary || ''}</textarea>
+  `;
+  container.appendChild(summaryCard);
+}
+
+function toggleTag(btn, subject, tag) {
+  btn.classList.toggle('selected');
+  const data = getData();
+  const key = weekKey(currentWeek);
+  if (!data[key]) data[key] = {};
+  if (!data[key].checkin) data[key].checkin = {};
+  const tags = data[key].checkin[subject + '_tags'] || [];
+  const idx = tags.indexOf(tag);
+  if (idx >= 0) tags.splice(idx, 1); else tags.push(tag);
+  data[key].checkin[subject + '_tags'] = tags;
+  saveData(data);
+}
+
+function saveCheckin() {
+  const data = getData();
+  const key = weekKey(currentWeek);
+  if (!data[key]) data[key] = {};
+  if (!data[key].checkin) data[key].checkin = {};
+  for (const name of Object.keys(SUBJECTS)) {
+    const el = document.getElementById('note_' + name);
+    if (el) data[key].checkin[name] = el.value;
+  }
+  const summary = document.getElementById('parentSummary');
+  if (summary) data[key].checkin.parent_summary = summary.value;
+  saveData(data); toast('Check-in saved');
+}
+
+// --- Alerts ---
+function renderAlerts() {
+  const data = getData();
+  const wk = data[weekKey(currentWeek)] || {};
+  const assignments = wk.assignments || [];
+  const container = document.getElementById('alertsList');
+  container.innerHTML = '';
+  let alerts = [];
+
+  for (const [name, info] of Object.entries(SUBJECTS)) {
+    const sub = assignments.filter(a => a.subject === name);
+    const missing = sub.filter(a => a.status === 'missing');
+    const late = sub.filter(a => a.status === 'late');
+    const noFeedback = sub.filter(a => (a.status === 'submitted' || a.status === 'graded') && a.feedback !== 'yes');
+
+    if (missing.length >= 3) alerts.push({ level:'red', icon:'🚨', title:`${name}: ${missing.length} missing assignments`, desc: missing.map(a=>a.title).join(', '), action:'Plan catch-up time this weekend' });
+    else if (missing.length >= 1) alerts.push({ level:'amber', icon:'⚠️', title:`${name}: ${missing.length} missing`, desc: missing.map(a=>a.title).join(', '), action:'Ask Reyansh what blocked completion' });
+    if (late.length >= 2) alerts.push({ level:'amber', icon:'⏰', title:`${name}: ${late.length} late submissions`, desc:'Pattern of late work', action:'Review weekly schedule' });
+    if (noFeedback.length > 0) alerts.push({ level:'green', icon:'📋', title:`${name}: ${noFeedback.length} awaiting feedback`, desc:'Teacher hasn\'t returned yet', action:'Check back next week' });
+  }
+
+  if (alerts.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text2);"><div style="font-size:2rem;margin-bottom:10px;">✅</div>No alerts this week. All subjects on track!</div>';
+    return;
+  }
+
+  alerts.forEach(a => {
+    const item = document.createElement('div');
+    item.className = 'alert-item ' + a.level;
+    item.innerHTML = `<div class="alert-icon">${a.icon}</div><div class="alert-body"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div><div class="alert-action">💡 ${a.action}</div></div>`;
+    container.appendChild(item);
+  });
+}
+
+// --- Readiness ---
+function renderReadiness() {
+  const data = getData();
+  const readiness = data.readiness || {};
+  const container = document.getElementById('readinessCards');
+  container.innerHTML = '';
+  const groups = {};
+  for (const [skill, info] of Object.entries(READINESS)) {
+    if (!groups[info.subject]) groups[info.subject] = [];
+    groups[info.subject].push({ name: skill, target: info.target, current: readiness[skill] || 0 });
+  }
+
+  for (const [subject, skills] of Object.entries(groups)) {
+    const card = document.createElement('div');
+    card.className = 'readiness-card';
+    const sInfo = SUBJECTS[subject];
+    card.innerHTML = `
+      <h3 style="color:${sInfo?sInfo.color:'var(--accent)'}">${sInfo?sInfo.icon:'📊'} ${subject}</h3>
+      ${skills.map(s => `
+        <div class="skill-row">
+          <div><div class="skill-name">${s.name}</div><div style="font-size:0.7rem;color:var(--text2)">Target: ${s.target}</div></div>
+          <div class="skill-dots">
+            ${[1,2,3].map(n => `<div class="skill-dot ${s.current>=n?'filled':''}" onclick="setReadiness('${s.name}',${n})">${n}</div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+    `;
+    container.appendChild(card);
+  }
+}
+
+function setReadiness(skill, value) {
+  const data = getData();
+  if (!data.readiness) data.readiness = {};
+  data.readiness[skill] = data.readiness[skill] === value ? 0 : value;
+  saveData(data); renderReadiness();
+  toast(`${skill}: ${data.readiness[skill] || 'cleared'}`);
+}
+
+// --- Export/Import ---
+function exportData() {
+  const data = getData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `reyansh_g8_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url); toast('Data exported');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try { saveData(JSON.parse(e.target.result)); renderAll(); toast('Data imported'); }
+    catch { toast('Invalid file'); }
+  };
+  reader.readAsText(file);
+}
+
+function resetWeek() {
+  if (!confirm('Reset all data for Week ' + currentWeek + '?')) return;
+  const data = getData(); delete data[weekKey(currentWeek)]; saveData(data); renderAll(); toast('Week reset');
+}
+
+// --- Handbook ---
+function toggleGrade(id) {
+  const content = document.getElementById('gc-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  if (content.classList.contains('collapsed')) {
+    content.classList.remove('collapsed');
+    arrow.textContent = '▼';
+  } else {
+    content.classList.add('collapsed');
+    arrow.textContent = '▶';
+  }
+}
+
+function toggleMilestone(el) {
+  el.classList.toggle('done');
+  const text = el.nextElementSibling;
+  if (text) text.classList.toggle('done');
+  // Save milestone state
+  const data = getData();
+  if (!data.milestones) data.milestones = {};
+  const key = text.textContent.trim();
+  data.milestones[key] = el.classList.contains('done');
+  saveData(data);
+  toast(el.classList.contains('done') ? '✓ Milestone completed' : 'Milestone unchecked');
+}
+
+function loadMilestones() {
+  const data = getData();
+  const milestones = data.milestones || {};
+  document.querySelectorAll('.milestone-bar').forEach(bar => {
+    const check = bar.querySelector('.milestone-check');
+    const text = bar.querySelector('.milestone-text');
+    if (text && milestones[text.textContent.trim()]) {
+      check.classList.add('done');
+      text.classList.add('done');
+    }
+  });
+}
+
+// --- Render All ---
+function renderAll() {
+  renderCards(); renderAssignments(); renderCheckin(); renderAlerts(); renderReadiness(); loadMilestones();
+}
+
+// Init
+updateWeekLabels();
+renderAll();
+</script>
+</body>
+</html>

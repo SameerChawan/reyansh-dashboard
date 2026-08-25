@@ -1,0 +1,4 @@
+*.json
+!render.yaml
+.DS_Store
+Thumbs.db
