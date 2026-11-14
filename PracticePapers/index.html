@@ -31,55 +31,162 @@ body { margin:0; background:#0f172a; color:#f1f5f9; font-family:'Segoe UI',syste
         text-decoration:none; padding:10px 14px; border-radius:8px; font-size:13px;
         letter-spacing:0.8px; }
 .open:hover { background:#2563eb; }
+.parentbtn { margin-left:auto; background:#1e293b; color:#94a3b8; border:1px solid #334155;
+             padding:8px 14px; border-radius:8px; font-size:12px; cursor:pointer; }
+.parentbtn:hover { border-color:#3b82f6; color:#fff; }
+.progress { background:#1e293b; border-left:4px solid #22c55e; padding:12px 16px;
+            border-radius:8px; font-size:13px; color:#86efac; margin-bottom:22px; }
+.progress b { color:#fff; }
+.section-title { font-size:13px; letter-spacing:2.5px; color:#94a3b8;
+                 margin:26px 0 14px; border-bottom:1px solid #1e293b; padding-bottom:8px; }
+.status { float:right; font-size:9px; letter-spacing:1.5px; padding:2px 8px;
+          border-radius:12px; text-transform:uppercase; }
+.st-solved { background:#14532d; color:#4ade80; }
+.st-pending { background:#334155; color:#94a3b8; }
+.lockedbar { background:#1e293b; border:1px dashed #475569; border-radius:12px;
+             padding:26px 20px; text-align:center; color:#94a3b8; font-size:13px; }
+.lockedbar b { color:#fbbf24; }
+.parentpanel { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+               width:min(420px,92vw); background:#1e293b; border:1px solid #3b82f6;
+               border-radius:14px; padding:22px 24px; z-index:50;
+               box-shadow:0 20px 60px rgba(0,0,0,0.6); }
+.parentpanel h3 { margin:0 0 8px; font-size:15px; letter-spacing:1px; }
+.parentpanel p { color:#94a3b8; font-size:12px; line-height:1.5; margin:0 0 14px; }
+.parentpanel label { display:block; padding:7px 0; font-size:13px; color:#e2e8f0;
+                     border-bottom:1px solid #283548; cursor:pointer; }
+.parentpanel hr { border:none; border-top:1px solid #334155; margin:10px 0; }
+.panelrow { display:flex; gap:10px; margin-top:16px; }
+.panelrow button { flex:1; padding:10px; border:none; border-radius:8px; cursor:pointer;
+                   font-size:13px; background:#3b82f6; color:#fff; }
+.panelrow button.danger { background:#7f1d1d; }
 .foot { text-align:center; color:#475569; font-size:11px; padding:26px 0 34px; letter-spacing:1px; }
 </style></head><body>
 <div class="top">
   <div class="logo">&#960;</div>
   <div><h1>PRACTICE PAPERS</h1>
   <div class="sub">MARINA MATHS ACADEMY &middot; SINGAPORE &middot; CHALLENGE SERIES</div></div>
-  <a class="back" href="/">&#8592; Back to Dashboard</a>
+  <button class="parentbtn" id="parentBtn" title="Parent controls">&#128274; Parent</button>
 </div>
 <div class="wrap">
   <div class="note"><b>How to use:</b> Pick a paper, print it (or use the on-screen print button),
   and work in pen under timed conditions &mdash; 90 minutes each. Solutions are intentionally
   <b>not</b> published here; check your answers with Dad/Mum after you finish.</div>
-  <div class="grid"><div class="card">
-          <div class="code">MMA-G8-CH01</div>
+  <div class="progress" id="progress">Grade 8 progress: <b id="progCount">0 / 3</b> solved
+  &nbsp;&middot;&nbsp; Grade 9 unlocks when all three Grade 8 papers are solved</div>
+  <h2 class="section-title">GRADE 8 &middot; CHALLENGE SERIES</h2>
+  <div class="grid"><div class="card" id="card-g8-set1" data-paper="g8-set1">
+          <div class="code">MMA-G8-CH01 <span class="status" id="status-g8-set1"></span></div>
           <h3>Grade 8 Challenge Paper 1</h3>
           <div class="pills"><span class="pill blue">Grade 8</span><span class="pill ">30 questions</span><span class="pill ">90 minutes</span><span class="pill amber">60 marks</span></div>
           <div class="desc">Foundation &rarr; Challenge &rarr; Mastery. Covers the UWCSEA Grade 8 course: Pythagoras, algebra, indices, linear functions, angles, simultaneous equations and data.</div>
-          <a class="open" href="g8-set1.html">Open question paper &#8594;</a>
-        </div><div class="card">
-          <div class="code">MMA-G8-CH02</div>
+          <a class="open" href="/PracticePapers/g8-set1.html">Open question paper &#8594;</a>
+        </div><div class="card" id="card-g8-set2" data-paper="g8-set2">
+          <div class="code">MMA-G8-CH02 <span class="status" id="status-g8-set2"></span></div>
           <h3>Grade 8 Challenge Paper 2</h3>
           <div class="pills"><span class="pill blue">Grade 8</span><span class="pill ">30 questions</span><span class="pill ">90 minutes</span><span class="pill amber">60 marks</span></div>
           <div class="desc">Foundation &rarr; Challenge &rarr; Mastery. Covers the UWCSEA Grade 8 course: Pythagoras, algebra, indices, linear functions, angles, simultaneous equations and data.</div>
-          <a class="open" href="g8-set2.html">Open question paper &#8594;</a>
-        </div><div class="card">
-          <div class="code">MMA-G8-CH03</div>
+          <a class="open" href="/PracticePapers/g8-set2.html">Open question paper &#8594;</a>
+        </div><div class="card" id="card-g8-set3" data-paper="g8-set3">
+          <div class="code">MMA-G8-CH03 <span class="status" id="status-g8-set3"></span></div>
           <h3>Grade 8 Challenge Paper 3</h3>
           <div class="pills"><span class="pill blue">Grade 8</span><span class="pill ">30 questions</span><span class="pill ">90 minutes</span><span class="pill amber">60 marks</span></div>
           <div class="desc">Foundation &rarr; Challenge &rarr; Mastery. Covers the UWCSEA Grade 8 course: Pythagoras, algebra, indices, linear functions, angles, simultaneous equations and data.</div>
-          <a class="open" href="g8-set3.html">Open question paper &#8594;</a>
-        </div><div class="card">
-          <div class="code">MMA-G9-CH01</div>
+          <a class="open" href="/PracticePapers/g8-set3.html">Open question paper &#8594;</a>
+        </div></div>
+  <h2 class="section-title">GRADE 9 &middot; CHALLENGE SERIES</h2>
+  <div class="grid" id="g9grid" style="display:none"><div class="card" id="card-g9-set1" data-paper="g9-set1">
+          <div class="code">MMA-G9-CH01 <span class="status" id="status-g9-set1"></span></div>
           <h3>Grade 9 Challenge Paper 1</h3>
           <div class="pills"><span class="pill blue">Grade 9</span><span class="pill ">30 questions</span><span class="pill ">90 minutes</span><span class="pill amber">60 marks</span></div>
           <div class="desc">Foundation &rarr; Challenge &rarr; Mastery. Covers the UWCSEA Grade 9 course: number &amp; algebra, quadratics, functions, coordinate geometry, statistics, mensuration, trigonometry and similarity.</div>
-          <a class="open" href="g9-set1.html">Open question paper &#8594;</a>
-        </div><div class="card">
-          <div class="code">MMA-G9-CH02</div>
+          <a class="open" href="/PracticePapers/g9-set1.html">Open question paper &#8594;</a>
+        </div><div class="card" id="card-g9-set2" data-paper="g9-set2">
+          <div class="code">MMA-G9-CH02 <span class="status" id="status-g9-set2"></span></div>
           <h3>Grade 9 Challenge Paper 2</h3>
           <div class="pills"><span class="pill blue">Grade 9</span><span class="pill ">30 questions</span><span class="pill ">90 minutes</span><span class="pill amber">60 marks</span></div>
           <div class="desc">Foundation &rarr; Challenge &rarr; Mastery. Covers the UWCSEA Grade 9 course: number &amp; algebra, quadratics, functions, coordinate geometry, statistics, mensuration, trigonometry and similarity.</div>
-          <a class="open" href="g9-set2.html">Open question paper &#8594;</a>
-        </div><div class="card">
-          <div class="code">MMA-G9-CH03</div>
+          <a class="open" href="/PracticePapers/g9-set2.html">Open question paper &#8594;</a>
+        </div><div class="card" id="card-g9-set3" data-paper="g9-set3">
+          <div class="code">MMA-G9-CH03 <span class="status" id="status-g9-set3"></span></div>
           <h3>Grade 9 Challenge Paper 3</h3>
           <div class="pills"><span class="pill blue">Grade 9</span><span class="pill ">30 questions</span><span class="pill ">90 minutes</span><span class="pill amber">60 marks</span></div>
           <div class="desc">Foundation &rarr; Challenge &rarr; Mastery. Covers the UWCSEA Grade 9 course: number &amp; algebra, quadratics, functions, coordinate geometry, statistics, mensuration, trigonometry and similarity.</div>
-          <a class="open" href="g9-set3.html">Open question paper &#8594;</a>
+          <a class="open" href="/PracticePapers/g9-set3.html">Open question paper &#8594;</a>
         </div></div>
+  <div class="lockedbar" id="g9locked">&#128274; <b>Grade 9 papers are locked.</b>
+  Solve all three Grade 8 papers first &mdash; they unlock automatically once Dad/Mum marks them complete.</div>
 </div>
 <div class="foot">Marina Maths Academy Challenge Series &middot; Prepared for Reyansh &middot; 6 papers &middot; 180 questions</div>
+
+<div class="parentpanel" id="parentPanel" style="display:none">
+  <h3>&#128274; Parent controls</h3>
+  <p>Tick each Grade 8 paper once it is solved and marked. Grade 9 unlocks when all three are ticked.</p>
+  <label><input type="checkbox" data-set="g8-set1"> Grade 8 Challenge Paper 1 &mdash; solved</label>
+  <label><input type="checkbox" data-set="g8-set2"> Grade 8 Challenge Paper 2 &mdash; solved</label>
+  <label><input type="checkbox" data-set="g8-set3"> Grade 8 Challenge Paper 3 &mdash; solved</label>
+  <hr>
+  <label><input type="checkbox" data-set="g9-set1"> Grade 9 Challenge Paper 1 &mdash; solved</label>
+  <label><input type="checkbox" data-set="g9-set2"> Grade 9 Challenge Paper 2 &mdash; solved</label>
+  <label><input type="checkbox" data-set="g9-set3"> Grade 9 Challenge Paper 3 &mdash; solved</label>
+  <div class="panelrow">
+    <button id="panelClose">Close</button>
+    <button id="panelReset" class="danger">Reset all progress</button>
+  </div>
+</div>
+
+<script>
+// Change this PIN to whatever you want
+var PARENT_PIN = "2026";
+var KEY = "mma_papers_progress_v1";
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {solved:{}}; }
+  catch(e) { return {solved:{}}; }
+}
+function saveState(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+function isSolved(id) { return !!loadState().solved[id]; }
+function g8Count() { return ["g8-set1","g8-set2","g8-set3"].filter(isSolved).length; }
+
+function refresh() {
+  var unlocked = g8Count() === 3;
+  document.getElementById("progCount").textContent = g8Count() + " / 3";
+  ["g8-set1","g8-set2","g8-set3","g9-set1","g9-set2","g9-set3"].forEach(function(id) {
+    var st = document.getElementById("status-" + id);
+    if (st) {
+      st.innerHTML = isSolved(id) ? "&#10003; Solved" : "Pending";
+      st.className = "status " + (isSolved(id) ? "st-solved" : "st-pending");
+    }
+  });
+  document.getElementById("g9grid").style.display = unlocked ? "grid" : "none";
+  document.getElementById("g9locked").style.display = unlocked ? "none" : "block";
+}
+
+document.getElementById("parentBtn").addEventListener("click", function() {
+  var pin = prompt("Enter parent PIN:");
+  if (pin === null) return;
+  if (pin !== PARENT_PIN) { alert("Incorrect PIN."); return; }
+  var st = loadState();
+  document.querySelectorAll("#parentPanel input[type=checkbox]").forEach(function(cb) {
+    cb.checked = !!st.solved[cb.dataset.set];
+  });
+  document.getElementById("parentPanel").style.display = "block";
+});
+
+document.querySelectorAll("#parentPanel input[type=checkbox]").forEach(function(cb) {
+  cb.addEventListener("change", function() {
+    var st = loadState();
+    if (cb.checked) st.solved[cb.dataset.set] = true; else delete st.solved[cb.dataset.set];
+    saveState(st);
+    refresh();
+  });
+});
+document.getElementById("panelClose").addEventListener("click", function() {
+  document.getElementById("parentPanel").style.display = "none";
+});
+document.getElementById("panelReset").addEventListener("click", function() {
+  if (confirm("Reset all progress?")) { saveState({solved:{}}); refresh();
+    document.querySelectorAll("#parentPanel input[type=checkbox]").forEach(function(cb){ cb.checked = false; }); }
+});
+refresh();
+</script>
 </body></html>
